@@ -2,6 +2,8 @@ const express = require('express');
 const connection = require("./connection");
 
 const app = express();
+app.use(express.json());
+
 
 // route principal pour l'accueil
 app.get('/', (req, res) => {
@@ -10,7 +12,7 @@ app.get('/', (req, res) => {
 
 // route pour récupérer tous les utilisateurs
 app.get('/api/users/', (req, res) => {
-  connection.query('SELECT * from myTable', (err, results) => {
+  connection.query('SELECT * FROM myTable', (err, results) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error retrieving data');
@@ -23,7 +25,7 @@ app.get('/api/users/', (req, res) => {
 
 // route pour récupérer tous les utilisateurs avec uniquement le nom, prenom et la date d'inscription
 app.get('/api/users/light', (req, res) => {
-  connection.query('SELECT nom, prenom, date_inscription from myTable', (err, results) => {
+  connection.query('SELECT nom, prenom, date_inscription FROM myTable', (err, results) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error retrieving data');
@@ -34,7 +36,19 @@ app.get('/api/users/light', (req, res) => {
 });
 
 
-
+// route pour récupérer tous les utilisateurs avec un filtre "superieur à ..." sur la colonne nbre_followers
+app.get('/api/users/filteredby/followers', (req, res) => {
+  connection.query('SELECT * FROM myTable WHERE nbre_followers > ?', req.query.nbre_followers,
+   (err, results) => {
+    if (err) {
+      return res.status(500).json({ err: err.message, sql: err.sql });
+    } if (results.length === 0) {
+      res.status(200).send("No users match");
+    }
+    return res.status(200).json(results);
+  }
+  );
+}); 
 
 
 
