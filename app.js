@@ -139,4 +139,32 @@ app.post('/api/users', (req, res) => {
   );
 });
 
+// route permettant de mettre à jour un utilisateurs
+app.put('/api/users/:id', (req, res) => {
+  const idUser = req.params.id;
+  const userUpdated = req.body;
+  connection.query(
+    'UPDATE myTable SET ? WHERE id = ?',
+    [userUpdated, idUser],
+    (err) => {
+      if (err) {
+        return res.status(500).json({ err: err.message, sql: err.sql });
+      }
+      connection.query(
+        'SELECT * FROM myTable WHERE id = ?',
+        idUser,
+        (err2, results2) => {
+          if (err2) {
+            return res.status(500).json({ err: err.message, sql: err.sql });
+          }
+          if (results2.length === 0) {
+            return res.status(404).send('can not find the user');
+          }
+          return res.status(200).json(results2);
+        }
+      );
+    }
+  );
+});
+
 app.listen(5000, () => console.log('server listening on port 5000'));
