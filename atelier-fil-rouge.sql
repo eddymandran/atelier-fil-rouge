@@ -4,7 +4,7 @@ CREATE TABLE `myTable` (
   `prenom` varchar(255) default NULL,
   `email` varchar(255) default NULL,
   `date_inscription` varchar(255),
-  `membre_actif` varchar(255) default NULL,
+  `membre_actif` TINYINT NOT NULL,
   `nbre_followers` mediumint,
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=1;

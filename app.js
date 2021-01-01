@@ -167,4 +167,53 @@ app.put('/api/users/:id', (req, res) => {
   );
 });
 
+// route permettant d'inverser le booleen
+app.put('/api/users/:id/toggleActif', (req, res) => {
+  const idUser = req.params.id;
+  connection.query(
+    'SELECT* FROM myTable WHERE id = ?',
+    idUser,
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ err: err.message, sql: err.sql });
+      } if (results.length === 0) {
+        return res.status(404).send('can not find the user');
+      }
+      console.log( results)
+      let updatedActiveMember = results[0].membre_actif;
+
+      if (results[0].membre_actif === 0) {
+        updatedActiveMember += 1;
+        console.log(`console log  === 0 ${updatedActiveMember}`)
+      } else {
+        updatedActiveMember -= 1;
+        console.log(`console log else : ${updatedActiveMember}`)
+      }
+
+      connection.query(
+        'UPDATE myTable SET membre_actif = ? WHERE id = ?',
+        [updatedActiveMember, idUser],
+        (err2) => {
+          if (err2) {
+            return res.status(500).json({ err: err2.message, sql: err2.sql });
+          }
+
+          connection.query(
+            'SELECT * FROM myTable WHERE id = ?',
+            idUser,
+            (err3, results3) => {
+              if (err3) {
+                return res
+                  .status(500)
+                  .json({ err: err3.message, sql: err3.sql });
+              }
+              res.status(201).json(results3[0]);
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
 app.listen(5000, () => console.log('server listening on port 5000'));
