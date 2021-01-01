@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 });
 
 // route pour récupérer tous les utilisateurs
-app.get('/users', (req, res) => {
+app.get('/api/users/', (req, res) => {
   connection.query('SELECT * from myTable', (err, results) => {
     if (err) {
       console.log(err);
@@ -19,6 +19,20 @@ app.get('/users', (req, res) => {
     }
   });
 });
+
+
+// route pour récupérer tous les utilisateurs avec uniquement le nom, prenom et la date d'inscription
+app.get('/api/users/light', (req, res) => {
+  connection.query('SELECT nom, prenom, date_inscription from myTable', (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error retrieving data');
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
 
 
 
