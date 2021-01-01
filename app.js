@@ -216,4 +216,30 @@ app.put('/api/users/:id/toggleActif', (req, res) => {
   );
 });
 
+// creation de la route permettant de supprimer un utilisateur
+app.delete("/api/users/delete/:id", (req, res) => {
+  const idUser = req.params.id;
+  connection.query(
+    "SELECT * FROM myTable WHERE id = ?",
+    idUser,
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ err: err.message, sql: err.sql });
+      } if (results.length === 0) {
+        return res.status(404).send("can not find the user");
+      }
+      connection.query(
+        "DELETE FROM myTable WHERE id = ?",
+        idUser,
+        (err2) => {
+          if (err2) {
+            return res.status(500).json({ err: err2.message, sql: err2.sql });
+          }
+          return res.status(200).send("the user has been deleted");
+        }
+      );
+    }
+  );
+});
+
 app.listen(5000, () => console.log('server listening on port 5000'));
