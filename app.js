@@ -242,4 +242,31 @@ app.delete("/api/users/delete/:id", (req, res) => {
   );
 });
 
+// creation de la route permettant de supprimer tous les utilisateurs actif ou inactif
+app.delete("/api/users/deleteAll/:membre_actif", (req, res) => {
+  const choix = req.params.membre_actif;
+  connection.query(
+    "SELECT * FROM myTable WHERE membre_actif = ?",
+    choix,
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ err: err.message, sql: err.sql });
+      } if (results.length === 0) {
+        return res.status(404).send("can not find the users");
+      }
+      connection.query(
+        "DELETE FROM myTable WHERE membre_actif = ?",
+        choix,
+        (err2) => {
+          if (err2) {
+            return res.status(500).json({ err: err2.message, sql: err2.sql });
+          }
+          return res.status(200).send("the users have been deleted");
+        }
+      );
+    }
+  );
+});
+
+
 app.listen(5000, () => console.log('server listening on port 5000'));
