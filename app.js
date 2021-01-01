@@ -8,7 +8,17 @@ app.get('/', (req, res) => {
   res.send('Bienvenue dans la quête Atelier Fil Rouge');
 });
 
-
+// route pour récupérer tous les utilisateurs
+app.get('/users', (req, res) => {
+  connection.query('SELECT * from myTable', (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error retrieving data');
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
 
 
 
